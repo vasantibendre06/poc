@@ -1,11 +1,19 @@
 pipeline {
     agent any
-    
+    environment {
+        APACHE_ROOT = '/var/www/html'
+    }
 
     stages {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/vasantibendre06/poc.git', branch: 'main'
+            }
+        }
+        stage('Deploy'){
+            steps{
+                sh "cp -r ./ ${APACHE_ROOT}"
+                sh 'systemctl restart apache2'
             }
         }
         
