@@ -17,13 +17,10 @@ pipeline {
         }
         stage('Deploy'){
             steps{
-                sh "cp -r ./ ${APACHE_ROOT}"
-                sh 'systemctl restart apache2'
+                sh "sudo cp -r ./ /var/www/html"
+                sh 'sudo systemctl restart apache2'
             }
         }
-        
-        
-        
     }
     post {
         success {
