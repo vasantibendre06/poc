@@ -5,6 +5,11 @@ pipeline {
     }
 
     stages {
+        stage('Admin'){
+            steps{
+                sh 'sudo -i'
+            }
+        }
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/vasantibendre06/poc.git', branch: 'main'
