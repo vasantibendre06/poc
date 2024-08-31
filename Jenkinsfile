@@ -1,7 +1,8 @@
 pipeline {
     agent any
     environment {
-        APACHE_ROOT = '/var/www/html'
+        SONARQUBE_URL = 'http://13.60.75.174:9000'
+        SONARQUBE_CREDENTIALS = 'SonarqubeTest'
     }
 
     stages {
@@ -9,6 +10,16 @@ pipeline {
             steps{
                 sh 'whoami'
                 sh 'sudo -i'
+            }
+        }
+        stage('SonarQube Scan') {
+            steps {
+                script {
+                    def scannerHome = tool 'SonarQube Scanner'
+                    withSonarQubeEnv('SonarQube Server') {
+                        sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar.properties"
+                    }
+                }
             }
         }
         stage('Checkout') {
