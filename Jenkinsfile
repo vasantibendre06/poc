@@ -9,22 +9,21 @@ pipeline {
         stage('Admin'){
             steps{
                 sh 'whoami'
-                sh 'sudo -i'
-            }
-        }
-        stage('SonarQube Scan') {
-            steps {
-                script {
-                    def scannerHome = tool 'SonarQube Scanner'
-                    withSonarQubeEnv('SonarQube Server') {
-                        sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar.properties"
-                    }
-                }
             }
         }
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/vasantibendre06/poc.git', branch: 'main'
+            }
+        }
+        stage('SonarQube Scan') {
+            steps {
+                script {
+                    def scannerHome = tool name: 'SonarQube Scanner'
+                    withSonarQubeEnv('SonarQube Server') {
+                        sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar.properties"
+                    }
+                }
             }
         }
         stage('Deploy'){
