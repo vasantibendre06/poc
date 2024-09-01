@@ -1,13 +1,14 @@
 pipeline {
     agent any
     environment {
-        SONARQUBE_URL = 'http://13.60.75.174:9000'
-        SONARQUBE_CREDENTIALS = 'SonarqubeTest'
+        SONARQUBE_SERVER = 'sonarqube' // Ensure this matches the name in Jenkins' SonarQube configuration
+        SONARQUBE_PROJECT_KEY = 'POC'  // Your SonarQube project key
+        SONARQUBE_SCANNER_HOME = tool 'sonarqube' // The name given in Jenkins Global Tool Configuration
     }
 
     stages {
-        stage('Admin'){
-            steps{
+        stage('Admin') {
+            steps {
                 sh 'whoami'
             }
         }
@@ -16,20 +17,24 @@ pipeline {
                 git url: 'https://github.com/vasantibendre06/poc.git', branch: 'main'
             }
         }
-        stage('SonarQube Scan') {
+        stage('SonarQube Analysis') {
             steps {
-                script {
-                    def scannerHome = tool name: 'SonarQube Scanner'
-                    withSonarQubeEnv('SonarQube Server') {
-                        sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar.properties"
-                    }
+                withSonarQubeEnv(SONARQUBE_SERVER) {
+                    sh """
+                        ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://192.168.254.134:9000 \
+                        -Dsonar.login=sqp_22b9370ede0f7a02eca0d928c131169b2aae539e \
+                        
+                    """
                 }
             }
         }
-        stage('Deploy'){
-            steps{
-                sh "sudo cp -r ./ /var/www/html"
-                sh 'sudo systemctl restart apache2'
+        stage('Copying To apache2 dir') {
+            steps {
+                sh "cp -rf ./ /var/www/html"
+                
             }
         }
     }
@@ -42,3 +47,4 @@ pipeline {
         }
     }
 }
+
