@@ -1,6 +1,6 @@
 resource "local_file" "copy_build_files" {
   content = <<-EOT
-    cp -rf ./ /var/www/html
+    cp -rf ./ /var/www/html && whoami
   EOT
   filename = "${path.module}/copy_file.sh"
   file_permission = "0755"
