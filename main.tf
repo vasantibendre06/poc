@@ -8,7 +8,7 @@ resource "local_file" "copy_build_files" {
 
 resource "null_resource" "run_sh_file" {
   provisioner "local-exec" {
-    command = "bash copy_file.sh"
+    command = "sh copy_file.sh"
   }
   depends_on = [local_file.copy_build_files]
 }
